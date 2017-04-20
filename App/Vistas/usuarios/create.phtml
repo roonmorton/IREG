@@ -1,0 +1,22 @@
+<?php \Core\Vista::parcial('header'); ?>
+<body>
+    <div class="ui segment vertical" style="padding: 50px 0 50px 0;">
+        <div class="ui container">
+            <h1 class="ui header center aligned">Agregar Nuevo Usuario </h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus in ducimus rerum amet quod laboriosam autem architecto consectetur debitis illo fuga aspernatur, modi sed suscipit perspiciatis earum distinctio. Tempore, consequuntur?</p>
+            <div class="ui divider"></div>
+            <form class="ui form ui container text" method="post" action="guardar">
+                <div class="field">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre">
+                </div>
+                <div class="field">
+                    <label for="telefono">Telefono</label>
+                    <input type="text" name="Telefono">
+                </div>
+                <input type="submit" value="Guardar" class="ui button red  fluid">
+            </form>
+        </div>
+    </div>
+</body>
+<?php \Core\Vista::parcial('footer'); ?>

@@ -1,0 +1,37 @@
+<div class="ui segment vertical segment inverted " style="padding:0;">
+    <div class="ui menu  inverted ">
+        <div class="ui container">
+            <!--<div class="item">
+<img src="<?php echo SERVIDOR; ?>/public/assets/img/Water Tower_48px.png">
+</div>-->
+            <div class="header item">
+                <?php echo \Core\App::getConfig()["appName"]; ?>
+            </div>
+            <a class="item active" href="/<?php echo APPNAME;?>/public/home">
+                <i class="icon home"></i>
+                Inicio
+            </a>
+            <!--<a class="active item">
+Inicio
+</a>
+<a class="item">
+Cargas
+</a>-->
+            <div class="ui right dropdown item">
+                <img class="ui avatar image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">
+                Ron Quevedo
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <a class="item">
+                        <i class="icon settings"></i>
+                        Configuración
+                    </a>
+                    <a class="item">
+                        <i class="icon sign out"></i>
+                        Salir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

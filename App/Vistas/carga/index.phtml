@@ -1,0 +1,79 @@
+<?php \Core\Vista::parcial('header'); ?>
+<body>
+    <?php \Core\Vista::parcial('navAgente'); ?>
+    <div class="ui segment vertical very padded" style="border:0">
+        <div class="ui container ui segment red very padded">
+            <h1 class="ui header">Carga de datos comerciales</h1>
+            <div class="ui divider"></div>
+            <!--<div class="ui  message">
+<i class="close icon"></i>
+<div class="header">
+Detalles
+</div>
+<ul class="list">
+<li>No. de archivos cargados: <strong>0</strong></li>
+<li>Ultima fecha carga de archivo: <strong>11/02/2017</strong></li>
+</ul>
+</div>-->
+            <div class="ui success message">
+                <div class="header">Errores procesando archivos</div>
+                <ul class="list">
+                    <li>Tamaño maximo 20MB.</li>
+                </ul>
+            </div>
+            <form action="cargar" class="ui form container text  segment" enctype="multipart/form-data" method="POST">
+                <div class="field">
+                    <label for="adjuntar archivo">Adjuntar archivo</label>
+                    <input type='file' name='archivo_datos' id='archivo_datos' placeholder="Selecciona el archivo" required>
+                </div>
+                <!--<p>Tamaño: <strong id="tam"><span id="tamano_archivo"></span></strong></p>-->
+                <input type="submit" value="Finalizar" class="ui button black fluid" id="btn_procesar" disabled>
+                <div class="ui success message">
+                    <div class="header msg">Errores procesando archivos</div>
+                    <ul class="list msg">
+                        <li id="item-msg">You must include both a upper and lower case letters in your password.</li>
+                        <li id="item-msg">You need to select your home country.</li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            function verificar_archivo($campo){
+                $(".list.msg").empty();
+                $(".header.msg").empty();
+                $(".ui.form").removeClass("error");
+                $(".ui.form").removeClass("success");
+                if($campo.files.length > 0){
+                    var tam_kb = 1024;
+                    if(($campo.files[0].size/tam_kb) > (tam_kb*10)){
+                        $('.header.msg').append("Errores de archivo...");
+                        $(".list.msg").append('<li id="item-msg">Archivo supera el tamaño...</li>');
+                        $(".list.msg").append('<li id="item-msg">Tamaño archivo: '+(Math.round($campo.files[0].size/tam_kb))+'KB</li>');
+                        $("#btn_procesar").prop("disabled", true);
+                        $(".ui.message").removeClass("success");
+                        $(".ui.message").addClass("error");
+                        $('.ui.form').addClass('error');
+                    }else{
+                        $('.header.msg').append("Mensaje informativo");
+                        $(".list.msg").append('<li id="item-msg">Tamaño archivo: '+(Math.round($campo.files[0].size/tam_kb))+'KB</li>');
+                        $("#btn_procesar").prop("disabled", false);
+                        $(".ui.message").addClass("success");
+                        $('.ui.form').addClass('success');
+                    }
+                }else{
+                    var control = $("#tamano_archivo");
+                    control.replaceWith(control = control.clone(true));
+                    $("#btn_procesar").prop("disabled", true);
+                }
+            }
+            $("#archivo_datos").change(function($campo,$form){
+                // console.log($campo);
+                verificar_archivo($campo.target);
+            });
+            verificar_archivo($("#archivo_datos")[0]);
+        });
+    </script>
+</body>
+<?php \Core\Vista::parcial('footer'); ?>

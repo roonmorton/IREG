@@ -1,0 +1,41 @@
+<?php \Core\Vista::parcial('header'); ?>
+
+<body>
+    <div class="ui modal small">
+
+        <div class="ui active dimmer">
+            <div class="ui small text loader">Cargando...</div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            alert("cargando...");
+        });
+        $(window).on('load',function(){
+           alert("cargado..."); 
+        });
+    </script>
+    <?php \Core\Vista::parcial('navAgente'); ?>
+
+    <table class="ui unstackable table celled">
+        <thead>
+            <tr>
+                <?php foreach($header as $h){ ?>
+                <th><?php echo $h; ?></th>
+                <?php }?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($registros as $registro){ ?>
+            <tr>
+                <?php foreach($registro as $r){ ?>
+                <td><?php echo $r; ?></td>
+                <?php } ?>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+
+</body>
+
+<?php \Core\Vista::parcial('footer'); ?>

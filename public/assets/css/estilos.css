@@ -1,0 +1,28 @@
+.bg-login{
+    background: url(../img/bg-blur1.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+.raiz {
+    #background: yellow;
+    height: 100%;
+    /*IMPORTANTE*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-login {
+    background: red;
+    padding: 2em !important;
+    min-width: 45%;
+}
+
+
+@media only screen and (max-width: 800px) {
+    .form-login {
+        min-width: 85%;
+    } 
+
+}
