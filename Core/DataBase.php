@@ -38,6 +38,7 @@ class DataBase{
                 $this->password,
                 $this->dbName
             );
+            $this->_conexion->set_charset("utf8");
 
             //$this->_conexion->exec('SET CHARACTER SET utf8');
         }catch(\Exception $ex ){

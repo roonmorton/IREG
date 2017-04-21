@@ -1,17 +1,50 @@
-<div class="ui left fixed vertical menu">
-    <div class="item">
-        <img class="ui mini image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">
+<!--<div class="ui left  inverted grey menu">
+<div class="item centered aligned">
+<!--<img class="ui mini image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">
+<h3 class="header ui link">Ron Quevedo</h3>
+</div>
+<a class="item" href="/<?php echo APPNAME;?>/admin">
+<i class="ui icon home"></i>
+Inicio</a>
+<a class="item" href="/<?php echo APPNAME;?>/admin/agentes">
+<i class="ui icon building"></i>
+Agentes</a>
+<a class="item" href="/<?php echo APPNAME;?>/admin/cuentas">
+<i class="icon user"></i>
+Cuentas</a>
+<a class="item" href="/<?php echo APPNAME;?>/admin/salir">
+<i class="icon sign out"></i>
+Salir</a>
+</div>-->
+<div class="ui segment  vertical black">
+    <div class="ui container">
+        <nav class="ui  secondary  menu">
+            <a class="item <?php echo (explode('| ',$titulo)[1]) == "Home" ? "active":"";  ?>" href="/<?php echo APPNAME;?>/admin">
+                <i class="ui icon home"></i>
+                Inicio</a>
+            <a class="item <?php echo (explode('| ',$titulo)[1]) == "Agentes" ? "active":"";  ?>" href="/<?php echo APPNAME;?>/admin/agentes">
+                <i class="ui icon building"></i>
+                Agentes</a>
+            <a class="item <?php echo (explode('| ',$titulo)[1]) == "Cuentas" ? "active":"";  ?>" href="/<?php echo APPNAME;?>/admin/cuentas">
+                <i class="icon user"></i>
+                Cuentas</a>
+
+
+            <div class="ui right dropdown item">
+                <img class="ui avatar image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">
+                Ron Quevedo
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <!--<a class="item">
+                        <i class="icon settings"></i>
+                        Configuración
+                    </a>-->
+                    <a class="item" href="/<?php echo APPNAME;?>/admin/salir">
+                        <i class="icon sign out"></i>
+                        Salir</a>
+                </div>
+            </div>
+        </nav>
+
     </div>
-    <a class="item" href="/<?php echo APPNAME;?>/public/admin">
-        <i class="ui icon home"></i>
-        Inicio</a>
-    <a class="item" href="/<?php echo APPNAME;?>/public/admin/agentes">
-        <i class="ui icon building"></i>
-        Agentes</a>
-    <a class="item" href="/<?php echo APPNAME;?>/public/admin/cuentas">
-        <i class="icon user"></i>
-        Cuentas</a>
-    <a class="item" href="/<?php echo APPNAME;?>/public/admin/salir">
-        <i class="icon sign out"></i>
-        Salir</a>
 </div>

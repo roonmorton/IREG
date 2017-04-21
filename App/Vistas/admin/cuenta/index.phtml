@@ -7,9 +7,9 @@
             <div class="ui segments">
                 <div class="ui segment red">
                     <h2 class="ui header">
-                        <i class="ui building icon"></i>
+                        <i class="ui user icon"></i>
                         <div class="content">
-                            Administracion de Agentes
+                            Administracion de Cuentas de usuario
                         </div>
                     </h2>
                 </div>
@@ -18,42 +18,55 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Código</th>
-                                <th>Pais</th>
+                                <th>Nombres</th>
+                                <th>Nombre usuario</th>
+                                <th>Estado pass</th>
+                                <th>Tipo Cuenta</th>
+                                <th>Distribuidor</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach($distribuidores as $distribuidor) {?>
+                            <?php foreach($cuentas as $cuenta) {?>
                             <tr>
-                                <td><?php echo $distribuidor['idDistribuidor']?></td>
-                                <td><?php echo $distribuidor['nombre']?></td>
-                                <td><?php echo $distribuidor['codigo']?></td>
-                                <td><?php echo $distribuidor['pais']?></td>
+                                <td><?php echo $cuenta['idCuenta']?></td>
+                                <td><?php echo $cuenta['nombres']?></td>
+                                <td><?php echo $cuenta['nombreUsuario']?></td>
+                                <td>
+                                    <?php if($cuenta['estadoPass'] == 1){ ?>
+                                    <div class="ui tiny blue horizontal label">Normal</div>
+                                    <?php } else {?>
+                                    <div class="ui red tiny horizontal label">Reestablecida</div></td>
+                                <?php } ?>
+                                <td><?php echo $cuenta['tipoCuenta']?></td>
+                                <td><?php echo $cuenta['distribuidor']?></td>
+
                                 <td class="ui center aligned">
-                                    <a class="ui button teal mini " onclick='edit(<?php echo '"' . $distribuidor['idDistribuidor'] .'","' . $distribuidor['nombre'] .'","' . $distribuidor['codigo'] .'","' .$distribuidor['pais'] .'"';?>)'>
+                                    <a class="ui button teal mini " onclick='edit(<?php echo '"' . $cuenta['idCuenta'] .'","' . $cuenta['nombres'] .'","' . $cuenta['nombreUsuario'] .'","' .$cuenta['tipoCuenta'] .'","' . $cuenta['distribuidor'] .'"';?>)'>
                                         <i class="ui icon edit"></i>
                                         Editar
+                                        
                                     </a>
-                                    <form method="post" action="eliminarAgente" style="display:inline" onsubmit='return confirm("Eliminar <?php echo $distribuidor['nombre']?> ?")'>
+                                    <form method="post" action="eliminarAgente" style="display:inline">
                                         <input type="text" name="id" hidden="hidden" value="<?php echo $distribuidor['idDistribuidor'];?>">
                                         <button type="submit" class="ui button orange mini ">
                                             <i class="ui icon erase"></i>
                                             Eliminar
                                         </button>
                                     </form>
-
+                                    <a class="ui button mini green">
+                                        <i class="icon refresh"></i>
+                                        Password</a>
                                 </td>
                             </tr>
                             <?php }    ?>
                         </tbody>
                         <tfoot class="full-width">
                             <tr>
-                                <th colspan="5">
+                                <th colspan="7">
                                     <div class="ui black label">
                                         Registros
-                                        <div class="detail">(<?php echo count($distribuidores) ?>)</div>
+                                        <div class="detail">(<?php echo count($cuentas) ?>)</div>
                                     </div>
                                     <a id="btnNuevoAgente" class="ui right floated small primary labeled icon button">
                                         <i class="building icon"></i> Nuevo Agente
@@ -66,30 +79,41 @@
             </div>
         </div>
     </div>
-    <form class="ui modal small frm form" method="post" action="guardarAgente" >
+    <form class="ui modal small frm form" method="post" action="guardarAgente">
         <i class="close icon"></i>
         <div class="header">
             <i class="ui plus icon"></i>
-            Nuevo Agente
+            Nueva cuenta de usuario
         </div>
         <div class="content">
             <div class="ui form frm">
-                <input type="text" name="id" id="idDistribuidor" hidden="" value="0">
+                <input type="text" name="idCuenta" id="idCuenta" hidden="" value="0">
                 <div class="field required">
-                    <label>Nombre</label>
-                    <input type="text" name="nombre_agente" id="nombre_agente" placeholder="Nombre, Descripcion" autocomplete="off">
+                    <label>Nombres</label>
+                    <input type="text" name="nombres" id="nombres" placeholder="Nombres" autocomplete="off">
                 </div>
                 <div class="field required">
-                    <label>Código Identificación (A-Z)</label>
-                    <input type="text" name="identificador"  id="identificador" placeholder="Código">
+                    <label>Nombre de usuario</label>
+                    <input type="text" name="username"  id="username" placeholder="Nombre de usuario">
                 </div>
-                <div class="field required">
-                    <label>Pais</label>
 
-                    <select name="pais" id="pais">
-                        <option value="">Seleccionar Pais</option>
-                        <?php foreach($paises as $pais) {?>
-                        <option value="<?php echo $pais['idPais']; ?>"><?php echo $pais['nombre']?></option>
+                <div class="field required">
+                    <label>Tipo de cuenta</label>
+
+                    <select name="tipoCuenta" id="tipoCuenta">
+                        <option value="">Seleccionar tipo</option>
+                        <?php foreach($tipoCuentas as $tipoCuenta) {?>
+                        <option value="<?php echo $tipoCuenta['idTipoCuenta']; ?>"><?php echo $tipoCuenta['descripcion']?></option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Agente</label>
+
+                    <select name="distribuidor" id="distribuidor">
+                        <option value="">Seleccionar distribuidor</option>
+                        <?php foreach($distribuidores as $distribuidor) {?>
+                        <option value="<?php echo $distribuidor['idDistrbuidor']; ?>"><?php echo $distribuidor['nombre']?></option>
                         <?php }?>
                     </select>
                 </div>
@@ -115,10 +139,10 @@
                 $('.small.modal')
                     .modal('setting', 'closable', false)
                     .modal('show');
-                $("#idDistribuidor").val("0");
-                $("#nombre_agente").val("");
-                $("#identificador").val("");
-                $("#pais").val("");
+                $("#idCuenta").val("0");
+                $("#nombres").val("");
+                $("#username").val("");
+                $("#tipoCuenta").val("");
             });
 
 
@@ -161,7 +185,7 @@
 
         });
 
-        function edit($id,$nombre,$codigo,$pais){
+        function edit($idCuenta,$nombres,$nombreUsuario,$tipoCuenta,$distribuidor){
             $('.small.modal')
                 .modal('setting', 'closable', false)
                 .modal('show');
