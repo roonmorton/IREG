@@ -2,7 +2,8 @@
 <body class="bg-login">
     <div class="raiz">
         <div class="form-login ui segment">
-            <form class="ui large form ">
+            <!--method="post" action="login/iniciar"-->
+            <form class="ui large form"  >
 
                 <h2 class="ui header center aligned">
                     <i class="unlock alternate icon"></i>
@@ -19,44 +20,103 @@ Iniciar Sesión
                 <div class="field">
                     <label>Usuario</label>
                     <div class="ui left icon input">
-                        <input type="text" placeholder="Nombre de usuario" autofocus>
+                        <input type="text" placeholder="Nombre de usuario" autofocus name="usuario">
                         <i class="user icon"></i>
                     </div>
                 </div>
                 <div class="field">
                     <label>Contraseña</label>
                     <div class="ui left icon input">
-                        <input type="password" placeholder="Contraseña">
+                        <input type="password" placeholder="Contraseña" name="contrasena">
                         <i class="lock icon"></i>
                     </div>
                 </div>
 
                 <div class="ui error message">
-                    <div class="header">Action Forbidden</div>
+                    <div class="header">Errores</div>
                     <p>You can only sign up for an account once with a given e-mail address.</p>
                 </div>
-                <div class="ui submit button big fluid blue" id="btnLogin">
+                <button class="ui submit button big fluid blue" id="btnLogin">
                     <i class="icon sign in"></i>
-                    Submit</div>
+                    Acceder</button>
             </form>
 
         </div>
     </div> 
     <div class="ui modal small">
-
         <div class="ui active dimmer">
             <div class="ui small text loader">Cargando...</div>
         </div>
     </div>
-    <script src="public/assets/js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
-    <script src="public/assets/js/semantic-ui-2.2.10/semantic.min.js"></script>
-    <script>
-        $("#btnLogin").click(function(){
-            $('.small.modal')
-                .modal('setting', 'closable', false)
-                .modal('show');
-        });
 
+    <script src="/<?php echo APPNAME;?>/public/assets/js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="/<?php echo APPNAME;?>/public/assets/js/semantic-ui-2.2.10/semantic.min.js"></script>
+    <script>
+        $(document).ready(function(){
+
+
+
+
+            $('.ui.form')
+                .form({
+                fields: {
+                    usuario: {
+                        identifier: 'usuario',
+                        rules: [
+                            {
+                                type   : 'empty',
+                                prompt : 'Ingrese un nombre de usuario.'
+                            }
+                        ]
+                    },
+                    contrasena: {
+                        identifier: 'contrasena',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Ingresar una contraseña.'
+                            },
+                            {
+                                type   : 'minLength[2]',
+                                prompt : 'Contraseña es de un minimo 2 caracteres'
+                            }
+                        ]
+                    }
+                },
+                onFailure: function() {
+                    //alert('Failure');
+                    return false; // false is required if you do don't want to let it submit 
+                },onSuccess: function(e,fields){
+                    e.preventDefault();
+                    console.log("submit");
+                    console.log(fields);
+                    $.ajax({
+                        data:  {usuario: 'user', password: 'pass'},
+                        url:   'login/iniciar',
+                        type:  'post',
+                        beforeSend: function () {
+                            // $("#resultado").html("Procesando, espere por favor...");
+                            $('.small.modal')
+                                .modal('setting', 'closable', false)
+                                .modal('show');
+                        },
+                        success:  function (response) {
+                            //$("#resultado").html(response);
+                            console.log(response);
+                            $('.small.modal')
+                                .modal('setting', 'closable', false)
+                                .modal('hide');
+                        }
+                    });
+                }
+            });
+            
+            /*$('.form').bind('submit',function(e){
+                e.preventDefault();
+                console.log("submitt");
+
+            }); */
+        });
     </script>
 </body>
 <?php \Core\Vista::parcial('footer'); ?>

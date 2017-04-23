@@ -6,16 +6,19 @@ defined("APPPATH") OR die("Acceso denegado..");
 use Core\Vista;
 use Core\DataBase;
 use Core\Helper;
+use Core\Auth;
 
 class Admin
 {
     public function index(){
+        Auth::auth();
         Vista::set('titulo','Admin | Home');
         Vista::render('admin.home.index');
     }
 
     public function agentes()
     {
+        
         $con = DataBase::instancia();
         $sql = "select * from tblPais";
         $stm = $con->prepare($sql);
@@ -69,6 +72,7 @@ class Admin
 
     public function salir(){
         echo "salir";
+        Auth::finalizar();
     }
 
 
