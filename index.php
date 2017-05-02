@@ -10,7 +10,7 @@ define('PROJECTPATH',dirname(__DIR__) . '/' . APPNAME );
 define('APPPATH', PROJECTPATH . '/App' );
 //echo PROJECTPATH;
 //controlador que cargara por defecto
-define('CONTROLADOR_DEFECTO','home');
+define('CONTROLADOR_DEFECTO','login');
 
 // autoload con namespaces
 function autoload_classes($nombre_clase){

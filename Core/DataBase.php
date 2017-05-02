@@ -18,9 +18,12 @@ class DataBase{
 
     private $dbName;
 
-    private static $_inst;
+    //private static $_inst;
+    private $statement;
 
-    private static $_conexion;
+    private $conexion;
+    
+    private $result;
 
     public function __construct(){
         
@@ -32,13 +35,13 @@ class DataBase{
             $this->password = $config['password'];
             $this->dbName = $config['database'];
 
-            $this->_conexion = new \mysqli(
+            $this->conexion = new \mysqli(
                 $this->host,
                 $this->usuario,
                 $this->password,
                 $this->dbName
             );
-            $this->_conexion->set_charset("utf8");
+            $this->conexion->set_charset("utf8");
 
             //$this->_conexion->exec('SET CHARACTER SET utf8');
         }catch(\Exception $ex ){
@@ -54,9 +57,12 @@ class DataBase{
     }
 
     public function query($sql){
-        $result = $this->_conexion->query($sql);
-        if($result){
-            return  $result;            
+        $this->result = $this->conexion->query($sql);
+        if($this->result){
+            //var_dump($this->result);
+            return $this->result;
+            //$this->statement->execute();
+            //$this->result = $this->statement->get_result();
         }else{
             MyException::Mensaje(
                 new \Exception("Error en la consulta '$sql'",1)
@@ -64,20 +70,23 @@ class DataBase{
         }
     }
 
-    public function get_all($result){
+    public function get_result($result = null){
         //var_dump(get_class_methods($result));
         $res = array();
-        while($row = $result->fetch_assoc()){
+        if($result != null)
+            $this->result = $result;
+        
+        while($row = $this->result->fetch_assoc()){
             $res[] = $row;
         }
-        $result->free();
+        $this->result->free();
         return $res;        
     }
     
     public function prepare($sql){
-        
-        if($this->_stm = $this->_conexion->prepare($sql)){
-            return  $this->_stm;            
+        $this->statement = $this->conexion->prepare($sql);
+        if($this->statement){
+            return  $this->statement;            
         }else{
             MyException::Mensaje(
                 new \Exception($this->_conexion->error,$this->_conexion->errno)
@@ -86,6 +95,9 @@ class DataBase{
     }
 
     
+   
+    
+   /* 
     public static function instancia(){
         if(!isset(self::$_inst)){
             $clase = __CLASS__;
@@ -97,10 +109,14 @@ class DataBase{
     public function __clone(){
         trigger_error('La clonacion de este objeto no esta permitida',E_USER_ERROR);
     }
-    
+    */
     public function terminar(){
-        if(isset($this->_conexion))
-            $this->_conexion->close();
+        if(isset($this->conexion)){
+            if(isset($this->statement))
+                $this->statement->close();
+            $this->conexion->close();
+            //unset($this);
+        }
     }
 }
 

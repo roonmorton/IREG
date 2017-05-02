@@ -7,9 +7,13 @@
             <div class="header item">
                 <?php echo \Core\App::getConfig()["appName"]; ?>
             </div>
-            <a class="item active" href="/<?php echo APPNAME;?>/home">
+            <a class="item active" href="/<?php echo APPNAME; ?>/agente">
                 <i class="icon home"></i>
                 Inicio
+            </a>
+            <a class="item active" href="/<?php echo APPNAME;?>/agente/cargainformacion">
+                <i class="icon file"></i>
+                Carga Archivo
             </a>
             <!--<a class="active item">
 Inicio
@@ -18,18 +22,17 @@ Inicio
 Cargas
 </a>-->
             <div class="ui right dropdown item">
-                <img class="ui avatar image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">
-                Ron Quevedo
+                <!--<img class="ui avatar image" src="/<?php echo APPNAME; ?>/public/assets/img/Circled User Male_48px.png">-->
+                <?php echo NOMBRE_USUARIO;?>
                 <i class="dropdown icon"></i>
                 <div class="menu">
-                    <a class="item">
+                    <!--<a class="item">
                         <i class="icon settings"></i>
                         Configuración
-                    </a>
-                    <a class="item">
+                    </a>-->
+                    <a class="item" href="/<?php echo APPNAME;?>/admin/salir">
                         <i class="icon sign out"></i>
-                        Salir
-                    </a>
+                        Salir</a>
                 </div>
             </div>
         </div>

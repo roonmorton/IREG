@@ -1,0 +1,103 @@
+<?php \Core\Vista::parcial('header'); ?>
+<body class="bg-logins">
+    <div class="raiz">
+        <div class="form-login ui segment gray inverted teal">
+            <!--method="post" action="login/iniciar"-->
+            <form class="ui large form segment inverted teal" method="post" action="/<?php echo APPNAME; ?>/login/guardarNuevaContrasena">
+
+                <h2 class="ui header center aligned">
+                    <i class="unlock alternate icon"></i>
+                    <div class="content">
+                        Cambio contraseña
+                    </div>
+                </h2>
+                <div class="ui divider"></div>
+                <!--
+<h3 class="ui center aligned icon header">
+<i class="circular users icon"></i>
+Iniciar Sesión
+</h3>-->
+                <div class="field inverted">
+                    <label>Nueva contraseña</label>
+                    <div class="ui left icon input">
+                        <input type="password" placeholder="Nueva contraseña" autofocus name="newpass" >
+                        <i class="lock icon"></i>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Repetir contraseña</label>
+                    <div class="ui left icon input">
+                        <input type="password" placeholder="Repetir contraseña" name="repeatpass" >
+                        <i class="lock icon"></i>
+                    </div>
+                </div>
+
+                <div class="ui error message">
+                    <!--<div class="header">Errores</div>-->
+                    <ul class="list">
+                        
+                    </ul>
+                </div>
+                <button class="ui submit button big fluid violet">
+                    <i class="icon sign in"></i>
+                    Finalizar</button>
+            </form>
+
+        </div>
+    </div> 
+    <div class="ui modal small">
+        <div class="ui active dimmer">
+            <div class="ui small text loader">Cargando...</div>
+        </div>
+    </div>
+
+    <script src="/<?php echo APPNAME;?>/public/assets/js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="/<?php echo APPNAME;?>/public/assets/js/semantic-ui-2.2.10/semantic.min.js"></script>
+    <script>
+        $(document).ready(function(){
+
+
+
+
+            $('.ui.form')
+                .form({
+                fields: {
+                    usuario: {
+                        identifier: 'newpass',
+                        rules: [
+                            {
+                                type   : 'empty',
+                                prompt : 'Ingrese una nueva contraseña'
+                            },
+                            {
+                                type   : 'minLength[4]',
+                                prompt : 'Las contraseñas deben de ser minimo 4 caracteres'
+                            }
+                        ]
+                    },
+                    contrasena: {
+                        identifier: 'repeatpass',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Ingresar una contraseña.'
+                            },
+                            {
+                                type    : 'match[newpass]',
+                                prompt   : 'Repetir contraseñas, no coinciden'
+                            }
+                        ]
+                    }
+                }
+            });
+            
+            /*$('.form').bind('submit',function(e){
+                e.preventDefault();
+                console.log("submitt");
+
+            }); */
+        });
+    </script>
+</body>
+<?php \Core\Vista::parcial('footer'); ?>
+

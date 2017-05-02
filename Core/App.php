@@ -5,6 +5,7 @@ defined('APPPATH') or die('Acceso denegado.');
 class App{
 
     private $_controlador;
+    private $controladorObj;
 
     private $_metodo;
 
@@ -24,9 +25,10 @@ class App{
         $url = $this->parseUrl();
         //print_r(dirname(__DIR__) . self::DIRECTORIO_CONTROLADORES . ucfirst($url[0]) . '.php');
         //Comprobar que existe archivo en el directorio de controladores
+        //var_dump($url);
         if(file_exists(self::DIRECTORIO_CONTROLADORES . ucfirst($url[0]) . '.php')){
             //nombre archivo a llamar
-            $this->_controlador = ucfirst($url[0]);
+            $this->_controlador = strtolower(ucfirst($url[0]));
             //eliminamos controlador de url, asi solo quedan los parametros del metodo
             unset($url[0]);
         }else{
@@ -38,7 +40,7 @@ class App{
         if(isset($url[1]))
         {
             //aqui obtenemos el metodo
-            $this->_metodo = $url[1];
+            $this->_metodo = strtolower($url[1]);
         }else{
             //El metodo por defecto sera inicio
             $this->_metodo = 'index';
@@ -48,10 +50,10 @@ class App{
         $full_class = self::NAMESPACE_CONTROLADORES . $this->_controlador;
         //echo $full_class;
         //Asociamos la instancia al controlador
-        $this->_controlador = new $full_class;
+        $this->controladorObj = new $full_class;
 
         //Comprobamos que exista el metodo en el controlador
-        if(method_exists($this->_controlador,$this->_metodo)){
+        if(method_exists($this->controladorObj,$this->_metodo)){
             //eliminamos el metodo
             unset($url[1]);
         }else{
@@ -67,17 +69,18 @@ class App{
     }
 
     public function parseUrl(){
-        $this->tipo_peticion = $_SERVER['REQUEST_METHOD'];
+        //$this->tipo_peticion = $_SERVER['REQUEST_METHOD'];
         //var_dump($_GET);
         //var_dump($_POST);
-        $this->files = $_FILES;
+        //$this->files = $_FILES;
+        //var_dump($_GET["url"]);
         if(isset($_GET)){
             return $_GET ? explode('/',filter_var(rtrim($_GET['url'],'/'),FILTER_SANITIZE_URL)): [CONTROLADOR_DEFECTO];
         }
     }
 
     public function iniciar(){
-        call_user_func_array([$this->_controlador,$this->_metodo],$this->_parametros);
+        call_user_func_array([$this->controladorObj,$this->_metodo],$this->_parametros);
     }
 
     public function getControlador(){

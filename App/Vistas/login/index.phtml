@@ -20,21 +20,23 @@ Iniciar Sesión
                 <div class="field">
                     <label>Usuario</label>
                     <div class="ui left icon input">
-                        <input type="text" placeholder="Nombre de usuario" autofocus name="usuario">
+                        <input type="text" placeholder="Nombre de usuario" autofocus name="usuario" id="usuario">
                         <i class="user icon"></i>
                     </div>
                 </div>
                 <div class="field">
                     <label>Contraseña</label>
                     <div class="ui left icon input">
-                        <input type="password" placeholder="Contraseña" name="contrasena">
+                        <input type="password" placeholder="Contraseña" name="contrasena" id="contrasena">
                         <i class="lock icon"></i>
                     </div>
                 </div>
 
                 <div class="ui error message">
-                    <div class="header">Errores</div>
-                    <p>You can only sign up for an account once with a given e-mail address.</p>
+                    <!--<div class="header">Errores</div>-->
+                    <ul class="list">
+                        
+                    </ul>
                 </div>
                 <button class="ui submit button big fluid blue" id="btnLogin">
                     <i class="icon sign in"></i>
@@ -88,12 +90,12 @@ Iniciar Sesión
                     return false; // false is required if you do don't want to let it submit 
                 },onSuccess: function(e,fields){
                     e.preventDefault();
-                    console.log("submit");
-                    console.log(fields);
+                   // console.log("submit");
+                    //console.log(fields);
                     $.ajax({
-                        data:  {usuario: 'user', password: 'pass'},
+                        data:  {usuario: fields.usuario, password: fields.contrasena},
                         url:   'login/iniciar',
-                        type:  'post',
+                        type:  'POST',
                         beforeSend: function () {
                             // $("#resultado").html("Procesando, espere por favor...");
                             $('.small.modal')
@@ -102,10 +104,24 @@ Iniciar Sesión
                         },
                         success:  function (response) {
                             //$("#resultado").html(response);
-                            console.log(response);
+                            //console.log(response);
                             $('.small.modal')
                                 .modal('setting', 'closable', false)
                                 .modal('hide');
+                            //console.log(response);
+                            var json = JSON.parse(response);//stringify(eval("(" + response + ")"));
+                            //console.log(json);
+                            if(json.estado){
+                                location.href = json.user;   
+                            }else{
+                                $("#contrasena").val("");
+                                $(".ui.form").addClass("error");
+                                $(".list").empty();
+                                $(".list").append("<li>Verificar usuario y contraseña...</>");
+                                $("#usuario").focus(function(){
+                                    this.select;
+                                });
+                            }
                         }
                     });
                 }

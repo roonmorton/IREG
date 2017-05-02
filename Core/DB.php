@@ -18,9 +18,13 @@ class DB{
 
     private $dbName;
 
-    private $_conexion;
+    private static $_inst;
+
+    private static $_conexion;
 
     public function __construct(){
+        
+        mysqli_report(MYSQLI_REPORT_STRICT);
         try{
             $config = App::getConfig();
             $this->host = $config['host'];
@@ -28,18 +32,19 @@ class DB{
             $this->password = $config['password'];
             $this->dbName = $config['database'];
 
-            $this->_conexion = mysqli_connect(
+            $this->_conexion = new \mysqli(
                 $this->host,
                 $this->usuario,
                 $this->password,
                 $this->dbName
             );
-            
+            $this->_conexion->set_charset("utf8");
+
             //$this->_conexion->exec('SET CHARACTER SET utf8');
         }catch(\Exception $ex ){
             //throw $e;
             //var_dump($ex);
-            
+
             //var_dump(get_class_methods($ex->getTrace()));
             //var_dump(get_class_methods(MyException));
             MyException::Mensaje($ex);
@@ -47,17 +52,56 @@ class DB{
             //echo "Error: " . $ex->getMessage() . "linea: " .$ex->getLine() . "archivo: " . $ex->getFile() . "codigo: " . $ex->getCode() //"trace: " .$ex->getTrace() ."prev: " . $ex->getPrevious() ;
         }
     }
-    
+
     public function query($sql){
-        return $this->_conexion->query($sql);
+        $result = $this->_conexion->query($sql);
+        if($result){
+            return  $result;            
+        }else{
+            MyException::Mensaje(
+                new \Exception("Error en la consulta '$sql'",1)
+            );
+        }
+    }
+
+    public function get_all($result){
+        //var_dump(get_class_methods($result));
+        $res = array();
+        while($row = $result->fetch_assoc()){
+            $res[] = $row;
+        }
+        $result->free();
+        return $res;        
     }
     
     public function prepare($sql){
-        //var_dump($this->_conexion->prepare("select * from tbl"));
-        return $this->_conexion->prepare($sql);
+        $this->_stm = $this->_conexion->prepare($sql);
+        if($this->_stm){
+            return  $this->_stm;            
+        }else{
+            MyException::Mensaje(
+                new \Exception($this->_conexion->error,$this->_conexion->errno)
+            );
+        }
     }
 
-}
+    
+    public static function instancia(){
+        if(!isset(self::$_inst)){
+            $clase = __CLASS__;
+            self::$_inst = new $clase;
+        }
+        return self::$_inst;
+    }
 
+    public function __clone(){
+        trigger_error('La clonacion de este objeto no esta permitida',E_USER_ERROR);
+    }
+    
+    public function terminar(){
+        if(isset($this->_conexion))
+            $this->_conexion->close();
+    }
+}
 
 ?>
