@@ -118,18 +118,21 @@ class Admin
         $idCuenta = $_POST["idCuenta"];
         $nombres = $_POST["nombres"];
         $username = $_POST["username"];
-        $idTipoCuenta = $_POST["tipoCuenta"];
+        $idTipoCuenta = ($_POST["tipoCuenta"] == "") ? null : $_POST["tipoCuenta"];
         $idDistribuidor = $_POST["distribuidor"];
         $idDistribuidor = ($idDistribuidor == "") ? "null" : $idDistribuidor;
         //$idDistribuidor = null;
-
+        
+        
         $con = new DataBase();
         $sql = "select * from tblCuenta where idCuenta = {$idCuenta}";
         $con->query($sql);
         if(count($con->get_result()) > 0){
             $sql = "update tblCuenta set nombres = '{$nombres}', nombreUsuario = '{$username}', idDistribuidor = {$idDistribuidor},idTipoCuenta = {$idTipoCuenta} where idCuenta = {$idCuenta}";
         }else
-            $sql = "insert into tblCuenta(nombres,nombreUsuario,idDistribuidor,idtipoCuenta) values('$nombres','$username','$idDistribuidor','$idTipoCuenta')";
+            $sql = "insert into tblCuenta(nombres,nombreUsuario,idDistribuidor,idtipoCuenta) values('{$nombres}','{$username}',{$idDistribuidor},'{$idTipoCuenta}')";
+        echo $sql;
+        //die();
         $con->query($sql);
         unset($con);
         Helper::ir("admin/cuentas");

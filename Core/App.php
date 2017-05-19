@@ -66,6 +66,7 @@ class App{
 
         //asocuamos el resto de segmentos correspondiente a los parametros por defecto sera un array vacio
         $this->_parametros = $url ? array_values($url) : [];
+       //var_dump($this->_parametros);
     }
 
     public function parseUrl(){

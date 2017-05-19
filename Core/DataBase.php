@@ -56,18 +56,25 @@ class DataBase{
         }
     }
 
+    public function ultimo_id(){
+        return mysqli_insert_id($this->conexion);
+    }
+    
     public function query($sql){
+        //return $this->conexion->query($sql);
         $this->result = $this->conexion->query($sql);
-        if($this->result){
+        return $this->result;
+        /*if($this->result){
             //var_dump($this->result);
             return $this->result;
             //$this->statement->execute();
             //$this->result = $this->statement->get_result();
         }else{
-            MyException::Mensaje(
+            return null;
+            /*MyException::Mensaje(
                 new \Exception("Error en la consulta '$sql'",1)
             );
-        }
+        }*/
     }
 
     public function get_result($result = null){
@@ -118,6 +125,30 @@ class DataBase{
             //unset($this);
         }
     }
+    
+    
+    public function autocommit($tipo){
+        $this->conexion->autocommit($tipo);
+    }
+    
+    public function rollback(){
+        $this->conexion->rollback();
+    }
+    
+    
+    public function commit(){
+        $this->conexion->commit();
+    }
+    
+    public function error(){
+        return "Error: " . $this->conexion->error;
+    }
+    
+    public function transaction(){
+        $this->conexion->begin_transaction(MYSQLI_TRANS_START_READ_ONLY);
+    }
+    
 }
+
 
 ?>

@@ -1,0 +1,104 @@
+
+<?php \Core\Vista::parcial('header'); ?>
+<body>
+    <?php \Core\Vista::parcial('navAnalista'); ?>
+    <div class="ui segment vertical secondary">
+        <div class="ui container">
+            <div class="ui  breadcrumb">
+                <a class="section" href="/<?php echo APPNAME; ?>/analista/">Inicio</a>
+                <div class="divider"> / </div>
+                <div class="active section">Agente: <a >Empresa Eléctrica de Guatemala S.A.</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui segment vertical ">
+
+        <div class="ui container ui segment red very padded">
+            <h1 class="ui header">Informacion cargada</h1>
+            <div class="ui divider"></div>
+            <!--<div class="ui  message">
+<!--<i class="close icon"></i>
+<div class="header">
+Detalles
+</div>
+<ul class="list">
+<li>No. de archivos cargados: <strong>0</strong></li>
+<li>Ultima fecha carga de archivo: <strong>11/02/2017</strong></li>
+</ul>
+</div>
+<a href="carga/" class="ui button  fluid red">Cargar Archivo</a>-->
+            <table class="ui striped table black celled">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Mes</th>
+                        <th>Año</th>
+                        <th>Usuario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>05/01/2017</td>
+                        <td>Abril</td>
+                        <td>2016</td>
+                        <td>cgasparico</td>
+                        <td>
+                            <a href="" class="ui button small ">Descargar informacion</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>05/01/2017</td>
+                        <td>Mayo</td>
+                        <td>2016</td>
+                        <td>jlemus</td>
+                        <td>
+                            <a href="" class="ui button small ">Descargar informacion</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>05/01/2017</td>
+                        <td>Junio</td>
+                        <td>2016</td>
+                        <td>jlemus</td>
+                        <td>
+                            <a href="" class="ui button small ">Descargar informacion</a>
+                        </td>
+                    </tr>
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">
+                            <div class="ui pagination menu">
+                                <a class="item">
+                                    <i class="chevron left icon"></i>
+                                </a>
+                                <a class="active item">
+                                    1
+                                </a>
+                                <a class="item">
+                                    2
+                                </a>
+                                <a class="item">
+                                    3
+                                </a>
+                                <a class="item">
+                                    ...
+                                </a>
+                                <a class="item">
+                                    <i class="chevron right icon"></i>
+                                </a>
+                            </div>
+                        </th>
+                        <th>Total Registros(<strong>3</strong>)</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <script>
+        $('.ui.dropdown').dropdown();
+    </script>
+</body>
+<?php \Core\Vista::parcial('footer'); ?>
