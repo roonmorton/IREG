@@ -44,6 +44,7 @@ class Agente
         $mes = substr($file_name,4,1); // mes que corresponde la informacion
         $tabla = substr($file_name,5,strlen($file_name)-4); // nombre del archivo
         //echo "dist: {$dist} campa: {$campania} año: {$anio} mes: {$mes} tabla: {$tabla}  ext: {$ext} \n - ";
+        
         if(strtolower($ext) != "txt")
         {
             array_push($errores, 'Extencion no soportada "'.$ext.'"');
@@ -141,7 +142,7 @@ class Agente
                             {// Procesar registro por registro del archivo, hasta llegar a su fin
                                 $reg = explode("\t",fgets($file));//Obtener un registro del archivo, como un array separado por tabulacion
                                 $ids = array(); // Alamacenar ids
-                             /*   
+                              
                                 //Obtener el pais del usuario del sistema
                                 $sql = "SELECT pais.idPais from tblPais as pais INNER JOIN tblDistribuidor as distribuidor ON pais.idPais = distribuidor.idPais INNER JOIN TblCuenta as cuenta ON cuenta.idDistribuidor = distribuidor.idDistribuidor WHERE cuenta.nombreUsuario = '{$_SESSION['usuario']}'";
                                 $con->query($sql);
@@ -275,7 +276,7 @@ class Agente
 
                                 break;
 
-*/
+
                             }
                             if($estado){
                                 $con->commit();
@@ -296,7 +297,7 @@ class Agente
                 //var_dump($errores);
 
                 fclose($file);
-                unlink($temp_dir . $file_req["name"]);
+                unlink($temp_dir . $file_name);
             }else
                 echo "Error al almacenar el archivo";
             die();
