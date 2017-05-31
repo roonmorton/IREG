@@ -100,6 +100,10 @@ class App{
         return parse_ini_file(APPPATH . '/config.ini');
     }
     
+    public function getAppName(){
+        return parse_ini_file(APPPATH . '/config.ini')["appTitle"];
+    }
+    
     public function get_tipo_peticion(){
         return $this->tipo_peticion;
     }

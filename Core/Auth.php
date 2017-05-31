@@ -91,9 +91,12 @@ class Auth{
             $con->terminar();
             unset($con);
         }
-        else
+        else{
             if($app->getControlador() != "login")
                 Helper::ir("login");
+            else if($app->getMetodo() == "salir" && $app->getControlador() == "login")
+                Helper::ir("login");
+        }
     }
 
 
@@ -103,8 +106,10 @@ class Auth{
             unset($_SESSION['usuario']);
             session_destroy();
             self::auth();
-        }else
+        }else{
             echo "no hay usuario";
+            self::auth();
+        }
     }
 
 }

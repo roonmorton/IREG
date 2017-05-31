@@ -61,5 +61,11 @@ class Login
         $con->terminar();
         unset($con);
     }
+    
+     public function salir(){
+        //Helper::peticion("POST");
+        echo "salir";
+        Auth::finalizar();
+    }
 
 }

@@ -19,6 +19,9 @@ Salir</a>
 <div class="ui segment  vertical black">
     <div class="ui container">
         <nav class="ui  secondary  menu">
+           <div class="header item">
+                <?php echo \Core\App::getConfig()["appTitle"]; ?>
+            </div>
             <a class="item <?php echo (explode('| ',$titulo)[1]) == "Home" ? "active":"";  ?>" href="/<?php echo APPNAME;?>/admin">
                 <i class="ui icon home"></i>
                 Inicio</a>

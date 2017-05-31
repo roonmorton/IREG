@@ -1,9 +1,9 @@
 <?php \Core\Vista::parcial('header'); ?>
 <body class="bg-logins">
     <div class="raiz">
-        <div class="form-login ui segment gray inverted black">
+        <div class="form-login ui segment gray  black">
             <!--method="post" action="login/iniciar"-->
-            <form class="ui large form segment inverted " method="post" action="/<?php echo APPNAME; ?>/login/guardarNuevaContrasena">
+            <form class="ui large form segment vertical " method="post" action="/<?php echo APPNAME; ?>/login/guardarNuevaContrasena">
 
                 <h2 class="ui header center aligned">
                     <i class="unlock alternate icon"></i>
@@ -17,7 +17,7 @@
 <i class="circular users icon"></i>
 Iniciar Sesión
 </h3>-->
-                <div class="field inverted">
+                <div class="field ">
                     <label>Nueva contraseña</label>
                     <div class="ui left icon input">
                         <input type="password" placeholder="Nueva contraseña" autofocus name="newpass" >
@@ -35,12 +35,19 @@ Iniciar Sesión
                 <div class="ui error message">
                     <!--<div class="header">Errores</div>-->
                     <ul class="list">
-                        
+
                     </ul>
                 </div>
-                <button class="ui submit button big fluid blue">
-                    <i class="icon sign in"></i>
-                    Finalizar</button>
+                <div class="ui buttons fluid">
+                    <button class="ui submit button   blue">
+                        <i class="icon sign in"></i>
+                        Finalizar</button>
+                    <a class="ui   button red" href="/<?php echo APPNAME;?>/login/salir">
+                        <i class="icon sign out"></i>
+                        Cancelar
+                    </a>
+                </div>
+
             </form>
 
         </div>
@@ -90,7 +97,7 @@ Iniciar Sesión
                     }
                 }
             });
-            
+
             /*$('.form').bind('submit',function(e){
                 e.preventDefault();
                 console.log("submitt");
