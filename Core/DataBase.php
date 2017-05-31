@@ -76,6 +76,10 @@ class DataBase{
             );
         }*/
     }
+    
+    public function get_Res(){
+        return $this->result->fetch_assoc();
+    }
 
     public function get_result($result = null){
         //var_dump(get_class_methods($result));
@@ -86,7 +90,7 @@ class DataBase{
         while($row = $this->result->fetch_assoc()){
             $res[] = $row;
         }
-        $this->result->free();
+        //$this->result->free();
         return $res;        
     }
     
@@ -142,6 +146,10 @@ class DataBase{
     
     public function error(){
         return "Error: " . $this->conexion->error;
+    }
+    
+    public function codigoError(){
+        return $this->conexion->errno;
     }
     
     public function transaction(){

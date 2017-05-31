@@ -12,8 +12,19 @@ class Agente
 {
     public function index(){
         Auth::auth();
-        $req = new App;
+        //$req = new App;
         //echo $req->get_tipo_peticion();;
+        //echo "hola";
+        $con = new DataBase();
+        $sql = 'select tblarchivo.idArchivo, tblarchivo.fecha as fechaCarga, concat((CASE tblarchivo.mes WHEN "1" THEN "Enero" WHEN "2" THEN "Febrero" WHEN "3" THEN "Marzo" WHEN "4" THEN "Abril" WHEN "5" THEN "Mayo" WHEN "6" THEN "Junio" WHEN "7" THEN "Julio" WHEN "8" THEN "Agosto" WHEN "9" THEN "Septiembre" WHEN "O" THEN "Octubre" WHEN "N" THEN "Noviembre" WHEN "D" THEN "Diciembre" END), \'-\',tblarchivo.anio) as FECHA, CONCAT(tbldistribuidor.codigo,tblarchivo.calidadServicio,tblarchivo.anio,tblarchivo.mes, tblarchivo.nombreTabla) AS nombreArchivo from tblarchivo INNER JOIN tblcuenta ON tblarchivo.idCuenta = tblcuenta.idCuenta INNER JOIN tbldistribuidor ON tbldistribuidor.idDistribuidor = tblcuenta.idDistribuidor WHERE (tbldistribuidor.idDistribuidor) = (SELECT d.idDistribuidor FROM tbldistribuidor as d INNER JOIN tblcuenta as c on d.idDistribuidor = c.idDistribuidor where c.nombreUsuario = \'' .USUARIO .'\') Order by tblArchivo.idArchivo DESC';  
+        
+        //echo $sql;
+        $archivos = [];
+        if($con->query($sql)){
+            $archivos = $con->get_result();
+        }
+
+        Vista::set("archivos",$archivos);
         Vista::set('titulo','Agente | Archivos Cargados');
         Vista::render('agente.index');
     }
@@ -21,6 +32,7 @@ class Agente
     public function cargainformacion(){
         Auth::auth();
 
+        //echo date("m");
         //Vista::set("errores",["error 1", "error 2"]);
         Vista::set("titulo",'Agente | Carga de información comercial');
         Vista::render('agente.cargarInformacion');
@@ -29,9 +41,10 @@ class Agente
     public function cargar(){
         Helper::peticion("POST"); //Aceptar peticiones POST
         Auth::auth(); // Verificar si hay usuario Logeado
-
+        //echo  "hola 1";
         $temp_dir = 'temp/'; // Directorio temporal
         $errores = []; // Si existen errores
+        $info = [];
         $estado = true; // estado del proceso
         $file_req = $_FILES["informacion_comercial"]; // Archivo en peticion
         //var_dump($file_req);
@@ -44,293 +57,246 @@ class Agente
         $mes = substr($file_name,4,1); // mes que corresponde la informacion
         $tabla = substr($file_name,5,strlen($file_name)-4); // nombre del archivo
         //echo "dist: {$dist} campa: {$campania} año: {$anio} mes: {$mes} tabla: {$tabla}  ext: {$ext} \n - ";
-        
+
+        Vista::set("titulo","Agente | Visor de proceso");
+        Vista::render("agente.informacion");
+
+        $con = new DataBase();
+        $sql = "select tblDistribuidor.nombre as distribuidor from tblCuenta inner join tblDistribuidor on tblCuenta.idDistribuidor = tblDistribuidor.idDistribuidor where tblcuenta.nombreUsuario = '".USUARIO."'";
+
+        if($con->query($sql)) self::mensaje("Información",$con->get_result()[0]["distribuidor"]);
+        else echo "error: " + $con->error();
+
+
+        self::mensaje('Información','Extencion archivo: ' . $ext);
         if(strtolower($ext) != "txt")
         {
-            array_push($errores, 'Extencion no soportada "'.$ext.'"');
+            self::mensaje('Error','Extencion no soportada ');
             $estado = false;
         }
-        $con = new DataBase();
         $sql = "select COUNT(1) as contador from tblDistribuidor INNER JOIN tblCuenta ON tblDistribuidor.idDistribuidor = tblCuenta.idDistribuidor where tblCuenta.nombreUsuario = '" . USUARIO ."' and tblDistribuidor.codigo = '{$dist}'";
+
         unset($dist);
         unset($ext);
+
         $con->query($sql);
         if($con->get_result()[0]["contador"] == 0)
         {
-            array_push($errores, 'Indentificación de distribuidor no corresponde a su usuario');
+            self::mensaje('Error','Archivo identificado para un agente diferente ');
             $estado = false;
         }
         if($campania != "C")
         {
-            array_push($errores,"Código de campaña no es valido");
+            self::mensaje('Error','Código de campaña no es valido');
             $estado = false;
         }
-        if($anio > (idate('y')))
+        if($anio != (idate('y')))
         {
-            array_push($errores, "No se puede cargar un archivo de un año superior");
+            self::mensaje('Error','No se puede cargar un archivo de un año distinto al actual');
             $estado = false;
         }
+
+        //if($nDia > 10)
+
         $meses = [1,2,3,4,5,6,7,8,9,"O","N","D"];
         if(!in_array($mes,$meses))
         {
-            array_push($errores,"Identificador de mes es invalido");
+            self::mensaje('Error','Identificador de mes es invalido');
             $estado = false;
         }
+
+        $nDia = date("j");
+        $nMes = date("m");
+        /*if($nDia > 10){
+            self::mensaje('Error','Solo puede cargar información los primeros 10 dias de cada mes');
+            $estado = false;
+        }*/
+
+        if($nMes != $mes){
+            self::mensaje('Error','Solo cargue informacion de mes en curso');
+            $estado = false;
+        }
+
+        //comprobar si archivo con el mismo nombre ya se ha cargado
+
+        $sql = "select count(1) as archivos from tblArchivo inner join tblCuenta ON tblArchivo.idCuenta = tblCuenta.idCuenta INNER JOIN tblDistribuidor ON tblDistribuidor.idDistribuidor = tblCuenta.idDistribuidor where mes = {$mes} and anio = {$anio} and nombreTabla = '{$tabla}'";
+        //echo $sql;
+        //die();
+        if($con->query($sql)){
+            //var_dump($con->get_result());
+            if($con->get_result()[0]["archivos"] >= 1 ){
+                self::mensaje('Error','Archivo ya se ha cargado...');
+                $estado = false; 
+            }
+        }else
+            $estado = false;
+        
+        //echo $sql;die();
         if($estado)
         {
-            // echo "Nombre archivo Correcto";
-            //var_dump($file_req);
-            //var_dump($file_req);
-            //die();
             $file_name = getdate()[0] . $file_name . ".txt";
-
             if(copy($file_req["tmp_name"], $temp_dir . $file_name))
             {// Si se almacena el archivo se procesa
                 $file = fopen($temp_dir . $file_name, "r"); //Abrir archivo
                 $cols = explode("\t",fgets($file)); //obtener la fila del encabezado
                 if(count($cols) != 26)
                 {//si las columnas no son 26 se lanza error
-                    array_push($errores, "Columnas de encabezado deben de ser 26 no ". count($cols));
+                    self::mensaje('Error','Formato del archivo debe contener 26 columnas');
                     $estado = false;
                 }
                 else
                 {
                     //procesar columnas de encabezado 
                     $encabezados = [
-                        "IDUsuario", // 0
-                        "Tarifa", // 1 
-                        "TipoRegistro", // 2
-                        "NroMedidor1", // 3
-                        "TipoMedidor1", // 4
-                        "FechaColocacion1", // 5
-                        "NroMedidor2", // 6
-                        "TipoMedidor2", // 7
-                        "FechaColocacion2", // 8
-                        "NroMedidor3", // 9
-                        "TipoMedidor3", // 10
-                        "FechaColocacion3", // 11
-                        "Nombre", // 12
-                        "Calle", // 13
-                        "Numero", //14
-                        "Piso", // 15
-                        "Unidad", // 16
-                        "Telefono", // 17
-                        "CodigoPostal", // 18
-                        "Departamento", // 19 
-                        "Municipio",// 20
-                        "Aldea", // 21 
-                        "Canton",// 22
-                        "Caserio", // 23
-                        "Potencia", // 24
-                        "PlanFacturacion" // 25
+                        "idusuario", // 0 vaciar espacios
+                        "tarifa", // 1  vaciar espacios
+                        "tiporegistro", // 2 vaciar espacios
+                        "nromedidor1", // 3 vaciar espacios
+                        "tipomedidor1", // 4 --
+                        "fechacolocacion1", // 5
+                        "nromedidor2", // 6 vaciar espacios
+                        "tipomedidor2", // 7 --
+                        "fechacolocacion2", // 8
+                        "nromedidor3", // 9 vaciar espacios
+                        "tipomedidor3", // 10 --
+                        "fechacolocacion3", // 11
+                        "nombre", // 12 //quitar comillas
+                        "calle", // 13
+                        "numero", //14
+                        "piso", // 15
+                        "unidad", // 16
+                        "telefono", // 17
+                        "codigopostal", // 18 //vaciar espacios
+                        "departamento", // 19 
+                        "municipio",// 20
+                        "aldea", // 21 
+                        "canton",// 22
+                        "caserio", // 23
+                        "potencia", // 24 vaciar espacios
+                        "planfacturacion" // 25 vaciar espacios
                     ];
-                    
+
+
+
                     foreach($cols as $col){
-                        if(!in_array(trim($col),$encabezados)){
-                            array_push($errores,"Columna no valida: {$col}");
+                        if(! in_array(trim(strtolower($col)),$encabezados)){
+                            self::mensaje('Error','Columna no valida: ' . strtolower(trim($col)));
                             $estado = false;
                         }
                     }
-                    
+
                     if($estado){
+                        self::mensaje('Información',"Encabezado procesado correctamente");
+
                         // Si las columnas de encabezado estan correctas
                         // se procesara las filas del archivo
                         // realizar una transaccion para deshacer los cambios por si surje un error;
                         $con->autocommit(false);
                         try{
+                            $idArchivo = 0;
+                            set_time_limit(600);
+                            $count = 0;
+                            self::mensaje('Información',"Procesando registros");
+                            //die();
                             while(! feof($file))
                             {// Procesar registro por registro del archivo, hasta llegar a su fin
                                 $reg = explode("\t",fgets($file));//Obtener un registro del archivo, como un array separado por tabulacion
-                                $ids = array(); // Alamacenar ids
-                              
-                                //Obtener el pais del usuario del sistema
-                                $sql = "SELECT pais.idPais from tblPais as pais INNER JOIN tblDistribuidor as distribuidor ON pais.idPais = distribuidor.idPais INNER JOIN TblCuenta as cuenta ON cuenta.idDistribuidor = distribuidor.idDistribuidor WHERE cuenta.nombreUsuario = '{$_SESSION['usuario']}'";
-                                $con->query($sql);
-                                $pais = $con->get_result()[0];
 
-                                if(count($pais) == 0)
-                                { // si no existe un pais
-                                    array_push($errores, "Error al buscar el pais del usuario, contactar soporte...");
-                                    $estado = false;
-                                    break;
-                                }
-                                else
-                                {// si se encuentra el pais continua
-                                    //var_dump($reg[19]);
+                                $count++;
+                                /*if($count >= 16190){
+                                    var_dump(count($reg));
+                                }*/
 
+                                if(count($reg) == 26 ){ // si el registro contiene 26 posiciones
+                                    $sql = "SET @msg = ''";
+                                    $sql1 = "SET @registro = ''";
+                                    if($con->query($sql) and $con->query($sql1)){ //Si setea las variables pasamos a operar
 
-                                    $ids["idPais"] = $pais["idPais"]; //Alamacenar el id del pais
-                                    unset($pais); //varciar Pais
+                                        $sql = "call prueba('{$_SESSION['usuario']}', '".str_replace("'","\'",$reg[19])."', '".str_replace("'","\'",$reg[20])."','" . 
+                                            str_replace("'","\'",str_replace(" ","",$reg[18])) . 
+                                            "','".str_replace("'","\'",$reg[21])."','".str_replace("'","\'",$reg[22])."', '".str_replace("'","\'",$reg[23])."', '" . 
+                                            str_replace(" ","",$reg[0]) .
+                                            "','" . str_replace('"',"",str_replace("'","\'",$reg[12])) . "','" . 
+                                            str_replace("'","\'",$reg[13]).
+                                            "','".str_replace("'","\'",$reg[14]) ."','".str_replace("'","\'",$reg[15]).
+                                            "','".str_replace("'","\'",$reg[16])."','".str_replace("'","\'",$reg[17])."', '" . 
+                                            str_replace(" ","",$reg[24]) . "', '" . 
+                                            str_replace("'","\'",str_replace(" ","",$reg[25])) . "', '" . 
+                                            str_replace(" ","",$reg[1]) . "', '" . 
+                                            str_replace(" ","",$reg[3]) . 
+                                            "', '".str_replace("'","\'",$reg[4])."' , '{$reg[5]}' , '" . 
+                                            str_replace(" ","",$reg[6]) . 
+                                            "' , '".str_replace("'","\'",$reg[7])."','{$reg[8]}' ,'" . 
+                                            str_replace(" ","",$reg[9]) . 
+                                            "', '".str_replace("'","\'",$reg[10])."','{$reg[11]}','{$campania}','{$anio}','{$mes}','{$tabla}','" .
+                                            str_replace(" ","",$reg[2]) . "',@msg, @registro,'{$idArchivo}')";
 
-                                    //SQl para buscar si existe un departamento
-                                    $sql = "SELECT * FROM TblDepartamento WHERE nombre = '{$reg[19]}' and idPais = {$ids["idPais"]}";
-                                    echo $sql ."</br>";
-                                    if($con->query($sql))
-                                    {// si la consulta no da error
+                                        if($con->query($sql)){//si el procedimiento de almacenar los datos es correcto
+                                            //obtener la variable de registro
+                                            $sql = " SELECT @registro as registro";
+                                            if($con->query($sql)){
+                                                $idArchivo = $con->get_result()[0]["registro"];
+                                            }else{
 
-                                        $depto = $con->get_result();
-                                        if(count($depto) > 0)
-                                        {//si existe el departamento no lo insertamos
-                                            $ids["idDepartamento"] = $depto[0]["idDepartamento"];
-                                            unset($depto);
-                                            //var_dump($ids);
-                                            echo "departamento ya existe </br>";
-                                        }
-                                        else
-                                        {//si no existe el departamento lo insertamos
-                                            unset($depto);
-                                            $sql = "INSERT INTO  TblDepartamento(nombre,idPais) VALUES('{$reg[19]}',{$ids["idPais"]})";
-                                            echo $sql ."</br>";
-                                            if($con->query($sql))
-                                            { // si no da error la insercion del departamento
-                                                $ids["idDepartamento"] = $con->ultimo_id();
-                                                //var_dump($con->ultimo_id());
-                                                $con->commit();
-                                                var_dump($con->ultimo_id());
-                                                echo "departamento insertado </br>";
-                                                //die();
-                                            }
-                                            else
-                                            { //si se produce error al insertar en departamento
                                                 $estado = false;
-                                                echo $con->error();
-                                                $con->rollback();
-                                                $con->autocommit(true);
-                                                $con->terminar();
+                                                break;
                                             }
+
+                                        }else{
+
+                                            $estado = false;
+                                            break;
                                         }
-
-                                        if($estado)
-                                        {
-                                            // SQL para buscar municipio
-                                            $sql = "SELECT * FROM tblMunicipio WHERE nombre = '{$reg[20]}' and codigoPostal " . ($reg[18] == "" ? " is null" : "= " . $reg[18]) . " and idDepartamento = {$ids["idDepartamento"]}";
-                                            echo $sql ."</br>";
-                                            if($con->query($sql))// si no da error verifica si existe el municipio
-                                            {
-                                                $municipio = $con->get_result();
-                                                if(count($municipio))
-                                                {//si existe le municipio
-                                                    //var_dump($municipio);
-                                                    $ids["idMunicipio"] = $municipio[0]["idMunicipio"];
-                                                    unset($municipio);
-                                                    echo "municipio ya existe</br>";
-
-                                                }
-                                                else
-                                                {//si no existe el municipio
-                                                    $sql = "INSERT INTO TblMunicipio(nombre,idDepartamento,codigoPostal) VALUES('{$reg[20]}',{$ids['idDepartamento']}, " . ($reg[18] == "" ? "null" : $reg[18]) . ")";
-                                                    echo $sql ."</br>";
-
-                                                    if($con->query($sql))
-                                                    {//si no ocurre error en la consulta
-                                                        $ids["idMunicipio"] = $con->ultimo_id();
-                                                        echo "municipio agregado </br>";
-                                                    }
-                                                    else
-                                                    {//Si hubo un error volver todo
-                                                        $estado = false;
-                                                        echo $con->error();
-                                                        $con->rollback();
-                                                        $con->autocommit(true);
-                                                        $con->terminar();
-                                                    }
-                                                }
-                                            }
-                                            else//si se produce error volver todo a la normalidad
-                                            {
-                                                $estado = false;
-                                                echo $con->error();
-                                                $con->rollback();
-                                                $con->autocommit(true);
-                                                $con->terminar();
-                                            }
-                                            
-                                            if($estado)
-                                            {
-                                            
-                                                // se inserta departamento 
-                                                // y se inserta municipio y codigo postal
-                                                // contianuar aqui
-                                                
-                                            }
-                                            
-                                            
-                                        }
-                                        var_dump($ids);
-
-
-                                    }
-                                    else
-                                    {//Error al buscar departamento
+                                    }else{
                                         $estado = false;
-                                        $con->rollback();
-                                        $con->autocommit(true);
-                                        $con->terminar();
+                                        break;
                                     }
-
-                                    //SQL para insertar departamento
-
-                                    //echo $sql;
-                                    //var_dump($pais["idPais"]);
                                 }
 
-                                break;
+                            }//end while
 
 
-                            }
+                            self::mensaje('Información',"Registros procesados: " . $count);
                             if($estado){
+
                                 $con->commit();
                                 $con->autocommit(true);
+
+                                echo '<script> $("#botonera").append("'."<a class='ui button blue' href='/ireg/agente/'>Finalizar</a>".'")</script>';
+
                                 $con->terminar();
                             }else{
+
+                                echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Finalizar</a>".'")</script>';
+                                self::mensaje('Error',"Ha ocurrido un error codigo: " . $con->codigoError() . $con->error());
                                 $con->rollback();
                                 $con->autocommit(true);
                                 $con->terminar();
                             }
                         }catch(\Exception $ex){
+                            echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Finalizar</a>".'")</script>';
+                            self::mensaje('Error',"Ha ocurrido un error codigo: " . $con->codigoError());
                             $con->rollback();
                             $con->autocommit(true);
                             $con->terminar();
                         }
+                    }else{
+                        echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Finalizar</a>".'")</script>';
+                        $con->terminar();
                     }
                 }
-                //var_dump($errores);
 
                 fclose($file);
                 unlink($temp_dir . $file_name);
             }else
                 echo "Error al almacenar el archivo";
-            die();
+            //die();
+        }else{
+            echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Cargar Información</a>".'")</script>';
+            $con->terminar();
         }
-
-        //$con->terminar();
         unset($con);
 
-
-        //$req = new App;
-        //$data = $req->get_files()['archivo_datos'];
-
-        /*if(copy($data['tmp_name'], $temp_dir . $data['name'])){
-            //echo "Archivo cargado";
-            $file = fopen($temp_dir . $data['name'],'r');
-
-            $header = explode("\t",fgets($file));
-            //var_dump($header);
-            $registros = [];
-            while(!feof($file)){
-                $registros[] = explode("\t",fgets($file));
-            }
-            fclose($file);
-            unlink($temp_dir . $data['name']);
-        }else
-            echo "Error al copiar archivo";*/
-
-        Vista::set('errores',$errores);
-        Vista::set('titulo','Vista de archivo');
-        //Vista::set('header',$header);
-        //Vista::set('registros',$registros);
-        Vista::render('agente.cargarInformacion');
-        //echo $req->get_tipo_peticion();
     }
 
     public function salir(){
@@ -339,5 +305,9 @@ class Agente
         Auth::finalizar();
     }
 
+
+    public static function mensaje($titulo, $mensaje){
+        echo '<script> $("#mensajes").append("' ."<div class='item'><i class='comment outline icon'></i><div class='content'><h3 class='header ". ($titulo == 'Error'? 'red' : 'blue') . " ui'>{$titulo}</h3><div class='description'>{$mensaje}</div></div></div>" .'") </script>';
+    }
 
 }

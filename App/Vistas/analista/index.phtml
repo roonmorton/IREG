@@ -3,29 +3,25 @@
 <body>
     <?php \Core\Vista::parcial('navAnalista'); ?>
     <div class="ui segment vertical " style="border:none;">
-        
+
         <div class="ui container ui segment red very padded">
             <h1 class="ui header">Distribuidores</h1>
             <div class="ui divider"></div>
-            <div class="ui fluid action input">
-                <input type="text" placeholder="buscar...">
-                <div class="ui button blue">Buscar</div>
-            </div>
+            <!--<div class="ui fluid action input">
+<input type="text" placeholder="buscar...">
+<div class="ui button blue">Buscar</div>
+</div>-->
             <div class="ui divider hidden"></div>
 
             <div class="ui divided list">
+                <?php foreach($distribuidores as $distribuidor){ ?>
                 <div class="item">
-                    <a class="header" href="/<?php echo APPNAME; ?>/analista/informaciondistribuidor/A">Empresa Eléctrica de Guatemala S.A.</a>
-                    Guatemala
+                    <a class="header" href="/<?php echo APPNAME; ?>/analista/informaciondistribuidor/<?php echo $distribuidor["codigo"]; ?>">
+                    <?php echo $distribuidor["nombre"]; ?>
+                    </a>
+                    <?php echo $distribuidor["pais"]; ?>
                 </div>
-                <div class="item">
-                    <a class="header">Distribuidora de Electricidad de Occidente S.A.</a>
-                    Guatemala
-                </div>
-                <div class="item">
-                    <a class="header">Distribuidora de Electricidad de Oriente S.A.</a>
-                    Guatemala
-                </div>
+                <?php }?>
             </div>
 
 

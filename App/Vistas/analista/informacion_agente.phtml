@@ -38,38 +38,22 @@ Detalles
                     </tr>
                 </thead>
                 <tbody>
+                   <?php foreach($archivos as $archivo) { ?>
                     <tr>
-                        <td>05/01/2017</td>
-                        <td>Abril</td>
-                        <td>2016</td>
-                        <td>cgasparico</td>
+                        <td><?php echo $archivo["fecha"] ?></td>
+                        <td><?php echo $archivo["mes"] ?></td>
+                        <td><?php echo $archivo["anio"] ?></td>
+                        <td><?php echo $archivo["cuenta"] ?></td>
                         <td>
-                            <a href="" class="ui button small ">Descargar informacion</a>
+                            <a href="/<?php echo APPNAME; ?>/analista/descargarinformacion/<?php echo $archivo["idArchivo"]?>" class="ui button small ">Descargar informacion</a>
                         </td>
                     </tr>
-                    <tr>
-                        <td>05/01/2017</td>
-                        <td>Mayo</td>
-                        <td>2016</td>
-                        <td>jlemus</td>
-                        <td>
-                            <a href="" class="ui button small ">Descargar informacion</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>05/01/2017</td>
-                        <td>Junio</td>
-                        <td>2016</td>
-                        <td>jlemus</td>
-                        <td>
-                            <a href="" class="ui button small ">Descargar informacion</a>
-                        </td>
-                    </tr>
+                    <?php } ?>
 
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="4">
+                       <!-- <th colspan="4">
                             <div class="ui pagination menu">
                                 <a class="item">
                                     <i class="chevron left icon"></i>
@@ -90,8 +74,8 @@ Detalles
                                     <i class="chevron right icon"></i>
                                 </a>
                             </div>
-                        </th>
-                        <th>Total Registros(<strong>3</strong>)</th>
+                        </th>-->
+                        <th colspan="5">Total Registros(<strong><?php echo count($archivos); ?></strong>)</th>
                     </tr>
                 </tfoot>
             </table>

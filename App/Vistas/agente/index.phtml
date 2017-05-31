@@ -12,8 +12,8 @@
                     Detalles
                 </div>
                 <ul class="list">
-                    <li>No. de archivos cargados: <strong>0</strong></li>
-                    <li>Ultima fecha carga de archivo: <strong>11/02/2017</strong></li>
+                    <li>No. de archivos cargados: <strong><?php echo count($archivos)?></strong></li>
+                    <li>Ultima fecha carga de archivo: <strong><?php echo (count($archivos) > 0) ? $archivos[0]["FECHA"] : "Ninguna" ?></strong></li>
                 </ul>
             </div>
            <!-- <a href="carga/" class="ui button  fluid red">Cargar Archivo</a>-->
@@ -26,30 +26,19 @@
                         <th>Nombre Archivo</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="min-height:100px !important">
+                   <?php foreach($archivos as $archivo){?>
                     <tr>
-                        <td>3</td>
-                        <td>05/01/2017</td>
-                        <td>05/01/2017</td>
-                        <td><a href="" class="link ">BC163_DATOS_COMERCIALES.txt</a></td>
+                        <td><?php echo $archivo["idArchivo"] ?></td>
+                        <td><?php echo $archivo["fechaCarga"] ?></td>
+                        <td><?php echo $archivo["FECHA"] ?></td>
+                        <td><a  class="link "><?php echo $archivo["nombreArchivo"] ?></a></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>05/01/2017</td>
-                        <td>05/01/2017</td>
-                        <td><a href="" class="link ui">BC162_DATOS_COMERCIALES.txt</a></td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>05/01/2017</td>
-                        <td>05/01/2017</td>
-                        <td><a class="link">BC161_DATOS_COMERCIALES.txt</a></td>
-                    </tr>
-
+                    <?php }?>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <th colspan="3">
+                    <!--<tr>
+                        <th colspan="4">
                             <div class="ui pagination menu">
                                 <a class="item">
                                     <i class="chevron left icon"></i>
@@ -71,8 +60,7 @@
                                 </a>
                             </div>
                         </th>
-                        <th>Total Registros(<strong>0</strong>)</th>
-                    </tr>
+                    </tr>-->
                 </tfoot>
             </table>
         </div>

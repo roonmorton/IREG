@@ -1,0 +1,27 @@
+
+<?php \Core\Vista::parcial('header'); ?>
+<body>
+    <div class="ui segment vertical inverted">
+    </div>
+    <div class="ui segment vertical very padded" style="min-height:95%;">
+        <div class="ui container text">
+            <h2 class="ui header">Eventos</h2>
+            <div class="ui divider"></div>
+            <div class="ui list" id="mensajes">
+                
+            </div>
+            <div class="ui segment vertical" id="botonera">
+                
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+
+            $('.ui.dropdown').dropdown();
+            //$("#test").text("hola2");
+        });
+
+    </script>
+</body>
+<?php \Core\Vista::parcial('footer'); ?>
