@@ -50,7 +50,9 @@ class Agente
         //var_dump($file_req);
         $file_name = explode("." , $file_req["name"])[0]; //nombre archivo
         //echo $file_name;
+        
         $ext = explode(".",$file_req["name"])[1]; //extencion de archivo
+        
         $dist = substr($file_name,0,1); //identificador distribuidor
         $campania = substr($file_name,1,1); //Campaña
         $anio = substr($file_name,2,2); // año que corresponde la informacion
@@ -69,7 +71,7 @@ class Agente
 
 
         self::mensaje('Información','Extencion archivo: ' . $ext);
-        if(strtolower($ext) != "txt")
+        if(trim(strtolower($ext)) != strtolower("txt"))
         {
             self::mensaje('Error','Extencion no soportada ');
             $estado = false;
@@ -112,15 +114,15 @@ class Agente
             $estado = false;
         }*/
 
-        if($nMes != $mes){
-            self::mensaje('Error','Solo cargue informacion de mes en curso');
+        if(($nMes-1) != $mes){
+            self::mensaje('Error','Solo se pueden cargar archivos de un mes anterior al actual');
             $estado = false;
         }
 
         //comprobar si archivo con el mismo nombre ya se ha cargado
 
-        $sql = "select count(1) as archivos from tblArchivo inner join tblCuenta ON tblArchivo.idCuenta = tblCuenta.idCuenta INNER JOIN tblDistribuidor ON tblDistribuidor.idDistribuidor = tblCuenta.idDistribuidor where mes = {$mes} and anio = {$anio} and nombreTabla = '{$tabla}'";
-        //echo $sql;
+        $sql = "select count(1) as archivos from tblArchivo inner join tblCuenta ON tblArchivo.idCuenta = tblCuenta.idCuenta INNER JOIN tblDistribuidor ON tblDistribuidor.idDistribuidor = tblCuenta.idDistribuidor where mes = {$mes} and anio = {$anio} and nombreTabla = '{$tabla}' and tblDistribuidor.idDistribuidor = (select dd.idDistribuidor from tblCuenta as cc inner join tblDistribuidor  as dd on dd.idDistribuidor = cc.idDistribuidor where cc.nombreUsuario = '" .USUARIO . "')";
+        //echo $sql;//die();
         //die();
         if($con->query($sql)){
             //var_dump($con->get_result());
@@ -128,8 +130,9 @@ class Agente
                 self::mensaje('Error','Archivo ya se ha cargado...');
                 $estado = false; 
             }
-        }else
+        }else{
             $estado = false;
+        }
         
         //echo $sql;die();
         if($estado)
@@ -180,7 +183,7 @@ class Agente
 
                     foreach($cols as $col){
                         if(! in_array(trim(strtolower($col)),$encabezados)){
-                            self::mensaje('Error','Columna no valida: ' . strtolower(trim($col)));
+                            self::mensaje('Error','Columna no valida: ' . trim(strtolower($col)));
                             $estado = false;
                         }
                     }

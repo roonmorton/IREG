@@ -56,8 +56,10 @@ class Login
         $con = new DataBase();
         
         $sql = "update tblCuenta set contrasena = '{$pass}', estadoPass = 1 where nombreUsuario = '{$_SESSION['usuario']}'";
-        if($con->query($sql))
+        if($con->query($sql)){
             Auth::auth();
+            AUth::finalizar();
+        }
         $con->terminar();
         unset($con);
     }

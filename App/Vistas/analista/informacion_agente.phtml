@@ -45,7 +45,7 @@ Detalles
                         <td><?php echo $archivo["anio"] ?></td>
                         <td><?php echo $archivo["cuenta"] ?></td>
                         <td>
-                            <a href="/<?php echo APPNAME; ?>/analista/descargarinformacion/<?php echo $archivo["idArchivo"]?>" class="ui button small ">Descargar informacion</a>
+                            <a href="/<?php echo APPNAME; ?>/analista/descargarinformacion/<?php echo $archivo["idArchivo"]?>" class="ui button small " id="btn_getFile">Descargar informacion</a>
                         </td>
                     </tr>
                     <?php } ?>
@@ -81,8 +81,19 @@ Detalles
             </table>
         </div>
     </div>
+    <div class="ui modal small">
+        <div class="ui active dimmer">
+            <div class="ui small text loader">Generando Archivo...</div>
+        </div>
+    </div>
     <script>
-        $('.ui.dropdown').dropdown();
+        $(document).ready(function(){
+           /* $("#btn_getFile").click(function(){
+                $('.small.modal')
+                    .modal('setting', 'closable', false)
+                    .modal('show');
+            });*/
+        });
     </script>
 </body>
 <?php \Core\Vista::parcial('footer'); ?>

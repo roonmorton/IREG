@@ -117,8 +117,9 @@ class Analista
                 if($con->query($sql)){
 
                     $registros = $con->get_result();
+                    fwrite($file,"\r\n");
                     foreach($registros as $registro){
-                        //fwrite($file,"");
+                        
                         fwrite($file, $registro["idUsuario"]."\t");
                         fwrite($file,$registro["Tarifa"]."\t");
                         fwrite($file,$registro["TIPOREGISTRO"]."\t");
@@ -148,7 +149,6 @@ class Analista
                         fwrite($file,$registro["PLANFACTURACION"]);
                     }
                     $estado = true;
-                    Helper::downFile($file_name);
 
                 }else{
                     echo "ha ocurrido un error";
@@ -163,7 +163,8 @@ class Analista
             }
 
             if($estado){
-
+               // echo "<script> $('.small.modal').modal('hide');</script>";
+                Helper::downFile($file_name);
             }
         }
     }
