@@ -42,6 +42,7 @@ class Agente
         Helper::peticion("POST"); //Aceptar peticiones POST
         Auth::auth(); // Verificar si hay usuario Logeado
         //echo  "hola 1";
+        $tiempo_inicial = microtime(true);
         $temp_dir = 'temp/'; // Directorio temporal
         $errores = []; // Si existen errores
         $info = [];
@@ -142,9 +143,10 @@ class Agente
             {// Si se almacena el archivo se procesa
                 $file = fopen($temp_dir . $file_name, "r"); //Abrir archivo
                 $cols = explode("\t",fgets($file)); //obtener la fila del encabezado
+               
                 if(count($cols) != 26)
                 {//si las columnas no son 26 se lanza error
-                    self::mensaje('Error','Formato del archivo debe contener 26 columnas');
+                    self::mensaje('Error','Formato del archivo debe contener 26 columnas '  . count($cols));
                     $estado = false;
                 }
                 else
@@ -266,7 +268,7 @@ class Agente
                                 $con->autocommit(true);
 
                                 echo '<script> $("#botonera").append("'."<a class='ui button blue' href='/ireg/agente/'>Finalizar</a>".'")</script>';
-
+                                self::mensaje('Información',"Tiempo transcurrido: " . round((microtime(true)- ( $tiempo_inicial)) , '2'));
                                 $con->terminar();
                             }else{
 
@@ -274,6 +276,7 @@ class Agente
                                 self::mensaje('Error',"Ha ocurrido un error codigo: " . $con->codigoError() . $con->error());
                                 $con->rollback();
                                 $con->autocommit(true);
+                                self::mensaje('Información',"Tiempo transcurrido: " . round((microtime(true)- ( $tiempo_inicial)) , '2'));
                                 $con->terminar();
                             }
                         }catch(\Exception $ex){
@@ -281,10 +284,12 @@ class Agente
                             self::mensaje('Error',"Ha ocurrido un error codigo: " . $con->codigoError());
                             $con->rollback();
                             $con->autocommit(true);
+                            self::mensaje('Información',"Tiempo transcurrido: " . round((microtime(true)- ( $tiempo_inicial)) , '2'));
                             $con->terminar();
                         }
                     }else{
                         echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Finalizar</a>".'")</script>';
+                        self::mensaje('Información',"Tiempo transcurrido: " . round((microtime(true)- ( $tiempo_inicial)) , '2'));
                         $con->terminar();
                     }
                 }
@@ -296,6 +301,7 @@ class Agente
             //die();
         }else{
             echo '<script> $("#botonera").append("'."<a class='ui button red' href='/ireg/agente/cargainformacion'>Cargar Información</a>".'")</script>';
+            self::mensaje('Información',"Tiempo transcurrido: " . round((microtime(true)- ( $tiempo_inicial)) , '2'));
             $con->terminar();
         }
         unset($con);
